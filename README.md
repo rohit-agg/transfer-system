@@ -28,5 +28,36 @@ Execute the following to run the application:
 
 ```sh
 cd ~/transfer-system
-docker compose up
+docker compose up --build --force-recreate
+```
+
+## APIs
+
+### Create Account
+
+```sh
+curl --location 'localhost:8080/accounts' \
+--header 'Content-Type: application/json' \
+--data '{
+    "account_id": 7,
+    "initial_balance": 20000
+}'
+```
+
+### Fetch Account
+
+```sh
+curl --location 'localhost:8080/accounts/5'
+```
+
+### Submit Transaction
+
+```sh
+curl --location 'localhost:8080/transactions' \
+--header 'Content-Type: application/json' \
+--data '{
+    "source_account_id": 6,
+    "destination_account_id": 3,
+    "amount": 121.12
+}'
 ```

@@ -2,7 +2,9 @@ package com.transfer.application.dtos.accounts;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -11,6 +13,10 @@ public class CreateAccount {
 
     @Positive
     private Long accountId;
+
+    @NotEmpty
+    @Size(min = 1, max = 128)
+    private String name;
 
     @Positive
     private Double initialBalance;

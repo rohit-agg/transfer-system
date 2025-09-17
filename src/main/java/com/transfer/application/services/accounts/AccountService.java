@@ -29,6 +29,7 @@ public class AccountService {
 
         Account account = new Account();
         account.setAccountId(createAccount.getAccountId());
+        account.setName(createAccount.getName());
         account.setBalance(createAccount.getInitialBalance());
         account = this.accountRepository.save(account);
         logger.info("Account created, account id = {}", account.getAccountId());
@@ -44,9 +45,11 @@ public class AccountService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
         }
 
-        AccountInfo accountInfo = new AccountInfo();
-        accountInfo.setAccountId(account.getAccountId());
-        accountInfo.setBalance(account.getBalance());
+        AccountInfo accountInfo = AccountInfo.builder()
+                .accountId(account.getAccountId())
+                .name(account.getName())
+                .balance(account.getBalance())
+                .build();
         logger.info("Account details retrieved, account id = {}", accountId);
 
         return accountInfo;
