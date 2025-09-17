@@ -46,7 +46,6 @@ class TransactionServiceTest {
     private void mockExecuteRunsCallback() {
         when(transactionTemplate.execute(any()))
                 .thenAnswer(invocation -> {
-
                     TransactionCallback<Boolean> callback = (TransactionCallback<Boolean>) invocation.getArgument(0);
                     TransactionStatus status = mock(TransactionStatus.class);
                     return callback.doInTransaction(status);
@@ -56,7 +55,6 @@ class TransactionServiceTest {
     @Test
     @DisplayName("submitTransaction: throws NOT_FOUND when source account missing")
     void submitTransaction_sourceMissing_throwsNotFound() {
-
         SubmitTransaction req = new SubmitTransaction();
         req.setSourceAccountId(1L);
         req.setDestinationAccountId(2L);
@@ -74,16 +72,16 @@ class TransactionServiceTest {
     @Test
     @DisplayName("submitTransaction: throws NOT_FOUND when destination account missing")
     void submitTransaction_destinationMissing_throwsNotFound() {
-
         SubmitTransaction req = new SubmitTransaction();
         req.setSourceAccountId(1L);
         req.setDestinationAccountId(2L);
         req.setAmount(100.0);
 
-        Account source = new Account();
-        source.setId(10L);
-        source.setAccountId(1L);
-        source.setBalance(1000.0);
+        Account source = Account.builder()
+                .id(10L)
+                .accountId(1L)
+                .balance(1000.0)
+                .build();
         when(accountRepository.findAccountByAccountId(1L)).thenReturn(source);
         when(accountRepository.findAccountByAccountId(2L)).thenReturn(null);
 
@@ -96,18 +94,19 @@ class TransactionServiceTest {
     @Test
     @DisplayName("submitTransaction: successful flow debits source, credits destination, and completes ledgers")
     void submitTransaction_success() {
-
         mockExecuteRunsCallback();
 
-        Account source = new Account();
-        source.setId(10L);
-        source.setAccountId(1001L);
-        source.setBalance(1000.0);
+        Account source = Account.builder()
+                .id(10L)
+                .accountId(1001L)
+                .balance(1000.0)
+                .build();
 
-        Account destination = new Account();
-        destination.setId(20L);
-        destination.setAccountId(2002L);
-        destination.setBalance(500.0);
+        Account destination = Account.builder()
+                .id(20L)
+                .accountId(2002L)
+                .balance(500.0)
+                .build();
 
         when(accountRepository.findAccountByAccountId(1001L)).thenReturn(source);
         when(accountRepository.findAccountByAccountId(2002L)).thenReturn(destination);
@@ -123,15 +122,17 @@ class TransactionServiceTest {
         when(accountRepository.debitBalance(10L, 100.0)).thenReturn(1);
         when(accountRepository.creditBalance(20L, 100.0)).thenReturn(1);
 
-        Account sourceAfter = new Account();
-        sourceAfter.setId(10L);
-        sourceAfter.setAccountId(1001L);
-        sourceAfter.setBalance(900.0);
+        Account sourceAfter = Account.builder()
+                .id(10L)
+                .accountId(1001L)
+                .balance(900.0)
+                .build();
 
-        Account destinationAfter = new Account();
-        destinationAfter.setId(20L);
-        destinationAfter.setAccountId(2002L);
-        destinationAfter.setBalance(600.0);
+        Account destinationAfter = Account.builder()
+                .id(20L)
+                .accountId(2002L)
+                .balance(600.0)
+                .build();
 
         when(accountRepository.findById(10L)).thenReturn(Optional.of(sourceAfter));
         when(accountRepository.findById(20L)).thenReturn(Optional.of(destinationAfter));
@@ -158,14 +159,16 @@ class TransactionServiceTest {
     void submitTransaction_debitFailure_throwsISE() {
         mockExecuteRunsCallback();
 
-        Account source = new Account();
-        source.setId(10L);
-        source.setAccountId(1001L);
-        source.setBalance(1000.0);
-        Account destination = new Account();
-        destination.setId(20L);
-        destination.setAccountId(2002L);
-        destination.setBalance(500.0);
+        Account source = Account.builder()
+                .id(10L)
+                .accountId(1001L)
+                .balance(1000.0)
+                .build();
+        Account destination = Account.builder()
+                .id(20L)
+                .accountId(2002L)
+                .balance(500.0)
+                .build();
 
         when(accountRepository.findAccountByAccountId(1001L)).thenReturn(source);
         when(accountRepository.findAccountByAccountId(2002L)).thenReturn(destination);
@@ -189,14 +192,16 @@ class TransactionServiceTest {
     void submitTransaction_creditFailure_throwsISE() {
         mockExecuteRunsCallback();
 
-        Account source = new Account();
-        source.setId(10L);
-        source.setAccountId(1001L);
-        source.setBalance(1000.0);
-        Account destination = new Account();
-        destination.setId(20L);
-        destination.setAccountId(2002L);
-        destination.setBalance(500.0);
+        Account source = Account.builder()
+                .id(10L)
+                .accountId(1001L)
+                .balance(1000.0)
+                .build();
+        Account destination = Account.builder()
+                .id(20L)
+                .accountId(2002L)
+                .balance(500.0)
+                .build();
 
         when(accountRepository.findAccountByAccountId(1001L)).thenReturn(source);
         when(accountRepository.findAccountByAccountId(2002L)).thenReturn(destination);
@@ -204,10 +209,11 @@ class TransactionServiceTest {
         when(ledgerRepository.save(any(Ledger.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         when(accountRepository.debitBalance(10L, 100.0)).thenReturn(1);
-        Account sourceAfter = new Account();
-        sourceAfter.setId(10L);
-        sourceAfter.setAccountId(1001L);
-        sourceAfter.setBalance(900.0);
+        Account sourceAfter = Account.builder()
+                .id(10L)
+                .accountId(1001L)
+                .balance(900.0)
+                .build();
         when(accountRepository.findById(10L)).thenReturn(Optional.of(sourceAfter));
 
         when(accountRepository.creditBalance(20L, 100.0)).thenReturn(0);

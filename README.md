@@ -39,8 +39,9 @@ docker compose up --build --force-recreate
 curl --location 'localhost:8080/accounts' \
 --header 'Content-Type: application/json' \
 --data '{
-    "account_id": 7,
-    "initial_balance": 20000
+    "account_id": 1,
+    "name": "Rohit Aggarwal",
+    "initial_balance": 1000
 }'
 ```
 

@@ -13,7 +13,7 @@ RUN ./gradlew --no-daemon dependencies || true
 
 # Now copy the rest of the source and build the bootable jar
 COPY src src
-RUN ./gradlew clean bootJar --no-daemon
+RUN ./gradlew clean test bootJar --no-daemon
 
 # ====== Runtime stage ======
 FROM amazoncorretto:17-alpine AS runtime

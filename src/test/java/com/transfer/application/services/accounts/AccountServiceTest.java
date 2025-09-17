@@ -41,11 +41,12 @@ class AccountServiceTest {
 
         when(accountRepository.findAccountByAccountId(1001L)).thenReturn(null);
 
-        Account saved = new Account();
-        saved.setId(42L);
-        saved.setAccountId(1001L);
-        saved.setName("Alice");
-        saved.setBalance(250.0);
+        Account saved = Account.builder()
+                .id(42L)
+                .accountId(1001L)
+                .name("Alice")
+                .balance(250.0)
+                .build();
         when(accountRepository.save(any(Account.class))).thenReturn(saved);
 
         Long resultId = accountService.createAccount(req);
@@ -70,9 +71,10 @@ class AccountServiceTest {
         req.setName("Bob");
         req.setInitialBalance(100.0);
 
-        Account existing = new Account();
-        existing.setId(1L);
-        existing.setAccountId(2002L);
+        Account existing = Account.builder()
+                .id(1L)
+                .accountId(2002L)
+                .build();
         when(accountRepository.findAccountByAccountId(2002L)).thenReturn(existing);
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> accountService.createAccount(req));
@@ -84,11 +86,12 @@ class AccountServiceTest {
     @DisplayName("getAccountDetails: returns mapped AccountInfo when account exists")
     void getAccountDetails_success() {
 
-        Account account = new Account();
-        account.setId(7L);
-        account.setAccountId(3003L);
-        account.setName("Charlie");
-        account.setBalance(999.99);
+        Account account = Account.builder()
+                .id(7L)
+                .accountId(3003L)
+                .name("Charlie")
+                .balance(999.99)
+                .build();
         when(accountRepository.findAccountByAccountId(3003L)).thenReturn(account);
 
         AccountInfo info = accountService.getAccountDetails(3003L);

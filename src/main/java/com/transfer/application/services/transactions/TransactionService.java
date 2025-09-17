@@ -14,6 +14,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 @Service
 public class TransactionService {
 
@@ -30,10 +32,18 @@ public class TransactionService {
 
     public void submitTransaction(SubmitTransaction submitTransaction) {
 
+        if (submitTransaction.getSourceAccountId().equals(submitTransaction.getDestinationAccountId())) {
+            logger.error("Source and destination accounts cannot be the same, account id = {}", submitTransaction.getSourceAccountId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Source and destination accounts cannot be the same");
+        }
+
         Account sourceAccount = this.accountRepository.findAccountByAccountId(submitTransaction.getSourceAccountId());
         if (sourceAccount == null) {
             logger.error("Source account not found, account id = {}", submitTransaction.getSourceAccountId());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Source account not found");
+        } else if (sourceAccount.getBalance() < submitTransaction.getAmount()) {
+            logger.error("Insufficient funds, account id = {}, balance = {}", submitTransaction.getSourceAccountId(), sourceAccount.getBalance());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient funds");
         }
 
         Account destinationAccount = this.accountRepository.findAccountByAccountId(submitTransaction.getDestinationAccountId());
@@ -60,10 +70,14 @@ public class TransactionService {
 
     private Boolean executeTransaction(TransactionStatus status, Account sourceAccount, Account destinationAccount, SubmitTransaction submitTransaction) {
 
-        Ledger debitEntry = new Ledger();
-        debitEntry.setAccountId(sourceAccount.getAccountId());
-        debitEntry.setDebit(submitTransaction.getAmount());
-        debitEntry.setStartBalance(sourceAccount.getBalance());
+        UUID transactionId = UUID.randomUUID();
+
+        Ledger debitEntry = Ledger.builder()
+                .transactionId(transactionId)
+                .accountId(sourceAccount.getAccountId())
+                .debit(submitTransaction.getAmount())
+                .startBalance(sourceAccount.getBalance())
+                .build();
         debitEntry = this.ledgerRepository.save(debitEntry);
         logger.info("Debit entry created, ledger id = {}", debitEntry.getId());
 
@@ -82,10 +96,12 @@ public class TransactionService {
         this.ledgerRepository.save(debitEntry);
         logger.info("Debit entry marked as complete, ledger id = {}", debitEntry.getId());
 
-        Ledger creditEntry = new Ledger();
-        creditEntry.setAccountId(destinationAccount.getAccountId());
-        creditEntry.setCredit(submitTransaction.getAmount());
-        creditEntry.setStartBalance(destinationAccount.getBalance());
+        Ledger creditEntry = Ledger.builder()
+                .transactionId(transactionId)
+                .accountId(destinationAccount.getAccountId())
+                .credit(submitTransaction.getAmount())
+                .startBalance(destinationAccount.getBalance())
+                .build();
         creditEntry = this.ledgerRepository.save(creditEntry);
         logger.info("Credit entry created, ledger id = {}", creditEntry.getId());
 

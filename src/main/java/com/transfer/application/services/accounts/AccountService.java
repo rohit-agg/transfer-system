@@ -27,10 +27,11 @@ public class AccountService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account already exists");
         }
 
-        Account account = new Account();
-        account.setAccountId(createAccount.getAccountId());
-        account.setName(createAccount.getName());
-        account.setBalance(createAccount.getInitialBalance());
+        Account account = Account.builder()
+                .accountId(createAccount.getAccountId())
+                .name(createAccount.getName())
+                .balance(createAccount.getInitialBalance())
+                .build();
         account = this.accountRepository.save(account);
         logger.info("Account created, account id = {}", account.getAccountId());
 

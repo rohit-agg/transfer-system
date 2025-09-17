@@ -6,13 +6,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "ledgers")
 public class Ledger {
@@ -22,7 +29,10 @@ public class Ledger {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "account_id")
+    @Column(name = "transaction_id", nullable = false)
+    private UUID transactionId;
+
+    @Column(name = "account_id", nullable = false)
     private Long accountId;
 
     @Column(name = "credit", precision = 4)
@@ -31,13 +41,13 @@ public class Ledger {
     @Column(name = "debit", precision = 4)
     private Double debit;
 
-    @Column(name = "start_balance", precision = 4)
+    @Column(name = "start_balance", precision = 4, nullable = false)
     private Double startBalance;
 
     @Column(name = "end_balance", precision = 4)
     private Double endBalance;
 
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private Status status = Status.IN_PROGRESS;
 
     @CreationTimestamp
