@@ -10,7 +10,7 @@ import lombok.Data;
 public class CreateAccount {
 
     @Positive
-    private Integer accountId;
+    private Long accountId;
 
     @Positive
     private Double initialBalance;

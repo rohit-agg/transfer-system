@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -23,15 +25,32 @@ public class Ledger {
     @Column(name = "account_id")
     private Long accountId;
 
-    @Column(name = "credit")
+    @Column(name = "credit", precision = 4)
     private Double credit;
 
-    @Column(name = "debit")
+    @Column(name = "debit", precision = 4)
     private Double debit;
 
+    @Column(name = "start_balance", precision = 4)
+    private Double startBalance;
+
+    @Column(name = "end_balance", precision = 4)
+    private Double endBalance;
+
+    @Column(name = "status")
+    private Status status = Status.IN_PROGRESS;
+
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public enum Status {
+        IN_PROGRESS,
+        COMPLETED,
+        FAILED
+    }
 }

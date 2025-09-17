@@ -10,10 +10,10 @@ import lombok.Data;
 public class SubmitTransaction {
 
     @Positive
-    private Integer sourceAccountId;
+    private Long sourceAccountId;
 
     @Positive
-    private Integer destinationAccountId;
+    private Long destinationAccountId;
 
     @Positive
     private Double amount;

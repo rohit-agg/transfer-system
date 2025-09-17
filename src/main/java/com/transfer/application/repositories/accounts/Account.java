@@ -23,9 +23,9 @@ public class Account {
     private Long id;
 
     @Column(name = "account_id")
-    private Integer accountId;
+    private Long accountId;
 
-    @Column(name = "balance")
+    @Column(name = "balance", precision = 4)
     private Double balance;
 
     @CreationTimestamp
