@@ -28,7 +28,23 @@ Execute the following to run the application:
 
 ```sh
 cd ~/transfer-system
-docker compose up --build --force-recreate
+docker compose up -d --build --force-recreate
+```
+
+Command starts containers in background, following 2 containers get created:
+
+1. `postgresql`: Running postgresql container with data volume mounted inside the code repository
+2. `application`: Running Transfer System application in a JVM container
+
+To view the running containers, run the following command:
+
+```sh
+docker ps
+```
+
+To view the logs of Java application, run the following command:
+```sh
+docker logs -f transfer-system-application-1
 ```
 
 ## Assumptions
