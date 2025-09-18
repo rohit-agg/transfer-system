@@ -26,7 +26,7 @@ public class AccountsController {
     public ResponseEntity<Void> createAccount(@Validated @RequestBody CreateAccount createAccount) {
 
         Long accountId = this.accountService.createAccount(createAccount);
-        return ResponseEntity.created(URI.create("/accounts/" + accountId))
+        return ResponseEntity.created(URI.create("/accounts/" + createAccount.getAccountId()))
                 .build();
     }
 

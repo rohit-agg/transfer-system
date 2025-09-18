@@ -1,6 +1,7 @@
 package com.transfer.application.controllers;
 
 import com.transfer.application.dtos.transactions.SubmitTransaction;
+import com.transfer.application.dtos.transactions.TransactionSuccess;
 import com.transfer.application.services.transactions.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,10 @@ public class TransactionsController {
     private TransactionService transactionService;
 
     @PostMapping()
-    public ResponseEntity<Void> submitTransaction(@Validated @RequestBody SubmitTransaction submitTransaction) {
+    public ResponseEntity<TransactionSuccess> submitTransaction(@Validated @RequestBody SubmitTransaction submitTransaction) {
 
-        this.transactionService.submitTransaction(submitTransaction);
+        TransactionSuccess transactionSuccess = this.transactionService.submitTransaction(submitTransaction);
         return ResponseEntity.ok()
-                .build();
+                .body(transactionSuccess);
     }
 }

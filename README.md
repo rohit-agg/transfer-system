@@ -31,7 +31,16 @@ cd ~/transfer-system
 docker compose up --build --force-recreate
 ```
 
+## Assumptions
+
+1. Currency is same for all accounts and all transactions
+2. No authentication/authorization has been implemented
+3. Account id is different from auto increment id in the accounts table
+4. Postgresql database and tables will get created automatically on running
+
 ## APIs
+
+APIs are accessible on `localhost:8080`
 
 ### Create Account
 
@@ -61,4 +70,25 @@ curl --location 'localhost:8080/transactions' \
     "destination_account_id": 3,
     "amount": 121.12
 }'
+```
+
+## Database
+
+For connecting to the database use the following command:
+
+```sh
+docker exec -it transfer-system-postgresql-1 psql -U app_user app_db
+```
+
+Following tables exists in the database:
+
+1. `accounts`: Contains details of all the accounts with current balance
+2. `ledgers`: Contains the transaction ledger depicting each credit/debit entry along with start and end balance in the account
+
+Run following queries to check data directly in database:
+
+```sql
+select * from accounts;
+
+select * from ledgers;
 ```
